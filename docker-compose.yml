@@ -1,0 +1,177 @@
+version: '3.8'
+
+services:
+  # Client Layer
+  web-ui:
+    build:
+      context: ./client/web-ui
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client/web-ui:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - REACT_APP_API_URL=http://localhost:8000
+
+  # Application Layer
+  api-gateway:
+    build:
+      context: ./api-gateway
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api-gateway:/app
+    environment:
+      - PYTHONPATH=/app
+      - AUTH_SERVICE_URL=http://auth-service:8080
+      - ORCHESTRATION_SERVICE_URL=http://orchestration-service:8001
+    depends_on:
+      - auth-service
+      - orchestration-service
+
+  auth-service:
+    image: quay.io/keycloak/keycloak:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - DB_VENDOR=POSTGRES
+      - DB_ADDR=postgres
+      - DB_DATABASE=keycloak
+      - DB_USER=keycloak
+      - DB_PASSWORD=keycloak
+    volumes:
+      - ./auth-service/config:/opt/keycloak/data/import
+    command: start-dev --import-realm
+    depends_on:
+      - postgres
+
+  orchestration-service:
+    build:
+      context: ./orchestration-service
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./orchestration-service:/app
+    environment:
+      - PYTHONPATH=/app
+      - INGESTION_SERVICE_URL=http://ingestion-service:8002
+      - ASSESSMENT_SERVICE_URL=http://assessment-service:8003
+      - SCORING_SERVICE_URL=http://scoring-service:8004
+      - REPORTING_SERVICE_URL=http://reporting-service:8005
+    depends_on:
+      - ingestion-service
+      - assessment-service
+      - scoring-service
+      - reporting-service
+
+  # Processing Layer
+  ingestion-service:
+    build:
+      context: ./processing/ingestion-service
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./processing/ingestion-service:/app
+    environment:
+      - PYTHONPATH=/app
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=dataaptor
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - S3_ENDPOINT=http://minio:9000
+      - S3_ACCESS_KEY=minio
+      - S3_SECRET_KEY=minio123
+      - S3_BUCKET=temp-storage
+    depends_on:
+      - postgres
+      - minio
+
+  assessment-service:
+    build:
+      context: ./processing/assessment-service
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./processing/assessment-service:/app
+    environment:
+      - PYTHONPATH=/app
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=dataaptor
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - S3_ENDPOINT=http://minio:9000
+      - S3_ACCESS_KEY=minio
+      - S3_SECRET_KEY=minio123
+      - S3_BUCKET=temp-storage
+    depends_on:
+      - postgres
+      - minio
+
+  scoring-service:
+    build:
+      context: ./processing/scoring-service
+    ports:
+      - "8004:8004"
+    volumes:
+      - ./processing/scoring-service:/app
+    environment:
+      - PYTHONPATH=/app
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=dataaptor
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - postgres
+
+  reporting-service:
+    build:
+      context: ./processing/reporting-service
+    ports:
+      - "8005:8005"
+    volumes:
+      - ./processing/reporting-service:/app
+    environment:
+      - PYTHONPATH=/app
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=dataaptor
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - S3_ENDPOINT=http://minio:9000
+      - S3_ACCESS_KEY=minio
+      - S3_SECRET_KEY=minio123
+      - S3_BUCKET=report-storage
+    depends_on:
+      - postgres
+      - minio
+
+  # Data Storage Layer
+  postgres:
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=dataaptor
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./storage/metadata-db/init:/docker-entrypoint-initdb.d
+
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    environment:
+      - MINIO_ROOT_USER=minio
+      - MINIO_ROOT_PASSWORD=minio123
+    command: server /data --console-address ":9001"
+
+volumes:
+  postgres_data:
+  minio_data:
