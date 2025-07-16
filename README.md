@@ -35,6 +35,10 @@ Please see the [Development Guide](docs/development/README.md) for setup instruc
 - [User Guides](docs/user-guides/README.md)
 - [Development Guides](docs/development/README.md)
 
+## Contributing
+
+We welcome contributions to the DataAptor AI project! Please see our [Contributing Guide](CONTRIBUTING.md) for details on how to get started, coding standards, and our development process.
+
 ## License
 
 [MIT License](LICENSE)
