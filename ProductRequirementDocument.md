@@ -1,12 +1,12 @@
 Below is a **Product Requirement Document (PRD)** for a software solution designed to assess and score the AI readiness of datasets (structured, semi-structured, and unstructured). The solution, tentatively named **"data-aptor-ai"**, will automate the evaluation process based on the framework the context document, providing a user-friendly interface, detailed reports, and actionable recommendations. The PRD defines the product’s purpose, features, requirements, and implementation considerations to guide development.
 ---
 
-# Product Requirement Document (PRD): DataReady AI
+# Product Requirement Document (PRD): DataAptor AI
 
 ## 1. Overview
 
 ### 1.1 Purpose
-DataReady AI is a software tool designed to evaluate the AI readiness of datasets (structured, semi-structured, and unstructured) by assessing key criteria such as data quality, accessibility, governance, AI compatibility, and diversity. It generates a comprehensive readiness score and provides actionable recommendations to improve dataset suitability for AI and machine learning (ML) workflows.
+DataAptor AI is a software tool designed to evaluate the AI readiness of datasets (structured, semi-structured, and unstructured) by assessing key criteria such as data quality, accessibility, governance, AI compatibility, and diversity. It generates a comprehensive readiness score and provides actionable recommendations to improve dataset suitability for AI and machine learning (ML) workflows.
 
 ### 1.2 Target Audience
 - Data scientists and ML engineers preparing datasets for AI projects.
@@ -18,7 +18,7 @@ DataReady AI is a software tool designed to evaluate the AI readiness of dataset
 Organizations often struggle to determine whether their datasets are suitable for AI applications due to issues like missing data, inconsistencies, bias, or compliance risks. Manual assessments are time-consuming and error-prone, and there is no standardized tool to automate AI readiness evaluation across diverse dataset types.
 
 ### 1.4 Solution
-DataReady AI will automate the assessment of datasets using a standardized framework, providing:
+DataAptor AI will automate the assessment of datasets using a standardized framework, providing:
 - A numerical AI readiness score (0–100) based on weighted criteria.
 - Detailed reports highlighting strengths, weaknesses, and recommendations.
 - Support for structured (e.g., CSV, SQL), semi-structured (e.g., JSON, XML), and unstructured (e.g., text, images, audio) data.
@@ -220,19 +220,19 @@ DataReady AI will automate the assessment of datasets using a standardized frame
 
 ## 7. Roadmap
 
-### Phase 1 (MVP, 3–6 months)
+### Phase 1 - MVP
 - Support for CSV, JSON, and text datasets.
 - Core assessment criteria (completeness, accuracy, consistency, privacy).
 - Basic UI with score and report generation.
 - Local deployment and AWS S3 integration.
 
-### Phase 2 (6–12 months)
+### Phase 2 
 - Add support for images, audio, and additional formats (XML, Excel).
 - Implement bias detection and advanced visualizations.
 - Add API and Python SDK for integrations.
 - Support cloud deployment (GCP, Azure).
 
-### Phase 3 (12–18 months)
+### Phase 3
 - Add plugin system for custom criteria.
 - Support enterprise features (RBAC, audit logs).
 - Optimize for larger datasets (>100 GB).
