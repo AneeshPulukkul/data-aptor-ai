@@ -113,13 +113,13 @@ graph TD
     classDef assessmentModules fill:#dfd,stroke:#333,stroke-width:1px,color:#000;
     classDef dataStorageLayer fill:#fbb,stroke:#333,stroke-width:2px,color:#000;
     classDef externalLayer fill:#fdb,stroke:#333,stroke-width:2px,color:#000;
-    %% Adding a style for the subgraphs to ensure text visibility
-    style AssessmentService color:#000;
-    style ClientLayer color:#000;
-    style ApplicationLayer color:#000;
-    style ProcessingLayer color:#000;
-    style DataStorageLayer color:#000;
-    style ExternalIntegrationsLayer color:#000;
+    %% Adding a style for the subgraphs with white text for better visibility
+    style AssessmentService color:#fff,fill:#333;
+    style ClientLayer color:#fff,fill:#333;
+    style ApplicationLayer color:#fff,fill:#333;
+    style ProcessingLayer color:#fff,fill:#333;
+    style DataStorageLayer color:#fff,fill:#333;
+    style ExternalIntegrationsLayer color:#fff,fill:#333;
     
     class WebUI,CLI clientLayer;
     class APIGateway,AuthService,OrchestrationService applicationLayer;
