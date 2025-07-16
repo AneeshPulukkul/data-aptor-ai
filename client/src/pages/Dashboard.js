@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
 import { Bar, Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -11,6 +11,12 @@ import {
   Legend,
   ArcElement,
 } from 'chart.js';
+import LoadingSpinner from '../components/LoadingSpinner';
+import Alert from '../components/Alert';
+import Card from '../components/Card';
+import Button from '../components/Button';
+import { formatBytes, formatDate } from '../utils/helpers';
+import { datasetService } from '../services/api';
 
 // Register ChartJS components
 ChartJS.register(
@@ -35,7 +41,7 @@ const Dashboard = () => {
       try {
         setLoading(true);
         // Fetch datasets
-        const datasetsResponse = await axios.get('http://localhost:8000/api/ingestion/datasets');
+        const datasetsResponse = await datasetService.getAllDatasets();
         setDatasets(datasetsResponse.data);
 
         // Fetch assessments (mock data for now)
@@ -48,10 +54,10 @@ const Dashboard = () => {
           { id: 5, dataset_id: 2, module: 'accessibility', total_score: 65 },
           { id: 6, dataset_id: 3, module: 'accessibility', total_score: 88 },
         ]);
-
         setLoading(false);
       } catch (err) {
-        setError('Failed to fetch data');
+        console.error('Error fetching data:', err);
+        setError('Failed to load dashboard data. Please try again later.');
         setLoading(false);
       }
     };
@@ -113,17 +119,13 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
+        <LoadingSpinner size="lg" message="Loading dashboard data..." />
       </div>
     );
   }
 
   if (error) {
-    return (
-      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-        <p>{error}</p>
-      </div>
-    );
+    return <Alert type="error" message={error} />;
   }
 
   return (
@@ -209,12 +211,12 @@ const Dashboard = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-500">
-                          {Math.round(dataset.file_size / 1024)} KB
+                          {formatBytes(dataset.file_size)}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-500">
-                          {new Date(dataset.created_at).toLocaleDateString()}
+                          {formatDate(dataset.created_at)}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

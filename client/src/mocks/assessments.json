@@ -1,0 +1,113 @@
+[
+  {
+    "id": 1,
+    "dataset_id": 1,
+    "module": "quality",
+    "created_at": "2025-07-05T11:20:00Z",
+    "status": "completed",
+    "total_score": 85,
+    "scores": {
+      "completeness": 92,
+      "accuracy": 78,
+      "consistency": 88,
+      "timeliness": 82
+    },
+    "details": {
+      "missing_values_pct": 2.3,
+      "duplicate_rows_pct": 0.5,
+      "outliers_pct": 1.8,
+      "inconsistent_formats_pct": 3.2
+    }
+  },
+  {
+    "id": 2,
+    "dataset_id": 2,
+    "module": "quality",
+    "created_at": "2025-07-06T09:45:00Z",
+    "status": "completed",
+    "total_score": 72,
+    "scores": {
+      "completeness": 68,
+      "accuracy": 74,
+      "consistency": 65,
+      "timeliness": 81
+    },
+    "details": {
+      "missing_values_pct": 8.7,
+      "duplicate_rows_pct": 1.2,
+      "outliers_pct": 2.5,
+      "inconsistent_formats_pct": 6.3
+    }
+  },
+  {
+    "id": 3,
+    "dataset_id": 3,
+    "module": "quality",
+    "created_at": "2025-07-10T14:30:00Z",
+    "status": "completed",
+    "total_score": 93,
+    "scores": {
+      "completeness": 95,
+      "accuracy": 92,
+      "consistency": 94,
+      "timeliness": 91
+    },
+    "details": {
+      "missing_values_pct": 0.8,
+      "duplicate_rows_pct": 0.1,
+      "outliers_pct": 1.2,
+      "inconsistent_formats_pct": 1.5
+    }
+  },
+  {
+    "id": 4,
+    "dataset_id": 1,
+    "module": "accessibility",
+    "created_at": "2025-07-05T11:40:00Z",
+    "status": "completed",
+    "total_score": 78,
+    "scores": {
+      "availability": 80,
+      "volume": 75
+    },
+    "details": {
+      "access_time_ms": 120,
+      "size_efficiency": "medium",
+      "format_standardization": "high"
+    }
+  },
+  {
+    "id": 5,
+    "dataset_id": 2,
+    "module": "accessibility",
+    "created_at": "2025-07-06T10:00:00Z",
+    "status": "completed",
+    "total_score": 65,
+    "scores": {
+      "availability": 60,
+      "volume": 70
+    },
+    "details": {
+      "access_time_ms": 250,
+      "size_efficiency": "low",
+      "format_standardization": "medium"
+    }
+  },
+  {
+    "id": 6,
+    "dataset_id": 3,
+    "module": "accessibility",
+    "created_at": "2025-07-10T14:45:00Z",
+    "status": "completed",
+    "total_score": 88,
+    "scores": {
+      "availability": 90,
+      "volume": 85
+    },
+    "details": {
+      "access_time_ms": 80,
+      "size_efficiency": "high",
+      "format_standardization": "high"
+    }
+  }
+]

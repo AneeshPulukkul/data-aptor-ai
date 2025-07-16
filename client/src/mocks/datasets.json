@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "name": "Customer Demographics",
+    "file_type": "CSV",
+    "file_size": 1048576,
+    "created_at": "2025-06-15T10:30:00Z",
+    "metadata": {
+      "rows": 10000,
+      "columns": 12,
+      "has_header": true,
+      "column_types": {
+        "id": "integer",
+        "age": "integer",
+        "gender": "categorical",
+        "income": "float",
+        "education": "categorical",
+        "occupation": "categorical",
+        "marital_status": "categorical",
+        "children": "integer",
+        "home_owner": "boolean",
+        "car_owner": "boolean",
+        "postal_code": "string",
+        "signup_date": "date"
+      }
+    }
+  },
+  {
+    "id": 2,
+    "name": "Product Transactions",
+    "file_type": "JSON",
+    "file_size": 2097152,
+    "created_at": "2025-06-20T14:45:00Z",
+    "metadata": {
+      "records": 15000,
+      "properties": ["transaction_id", "customer_id", "product_id", "quantity", "price", "timestamp", "payment_method", "shipping_address"],
+      "nested_objects": true
+    }
+  },
+  {
+    "id": 3,
+    "name": "Marketing Campaign Results",
+    "file_type": "CSV",
+    "file_size": 524288,
+    "created_at": "2025-07-01T09:15:00Z",
+    "metadata": {
+      "rows": 5000,
+      "columns": 8,
+      "has_header": true,
+      "column_types": {
+        "campaign_id": "string",
+        "channel": "categorical",
+        "start_date": "date",
+        "end_date": "date",
+        "budget": "float",
+        "impressions": "integer",
+        "clicks": "integer",
+        "conversions": "integer"
+      }
+    }
+  }
+]

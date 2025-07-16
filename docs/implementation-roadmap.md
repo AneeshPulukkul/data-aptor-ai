@@ -15,10 +15,10 @@ The implementation is divided into three phases, aligned with the roadmap in the
 - [ ] Set up basic infrastructure for local development
 
 #### Client Layer (Weeks 4-6)
-- [ ] Develop basic Web UI with React.js and Tailwind CSS
-  - [ ] Implement upload wizard for dataset submission
-  - [ ] Create dashboard for viewing assessment results
-  - [ ] Design and implement simple visualization components
+- [x] Develop basic Web UI with React.js and Tailwind CSS
+  - [x] Implement upload wizard for dataset submission
+  - [x] Create dashboard for viewing assessment results
+  - [x] Design and implement simple visualization components
 - [x] Create basic CLI tool with Python Click
   - [x] Implement dataset upload command
   - [x] Implement assessment trigger command

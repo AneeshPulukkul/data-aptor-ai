@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Simple "DA" for DataAptor -->
+  <rect width="100" height="100" rx="15" fill="#5B21B6" />
+  <path d="M25 25 H45 Q55 25 55 35 V65 Q55 75 45 75 H25 V25 Z" fill="white" />
+  <path d="M25 40 H40" stroke="#5B21B6" stroke-width="4" />
+  <path d="M25 60 H40" stroke="#5B21B6" stroke-width="4" />
+  <path d="M65 25 Q80 25 80 40 V60 Q80 75 65 75 H60 V50 H75 M60 25 V75" fill="none" stroke="white" stroke-width="8" />
+</svg>

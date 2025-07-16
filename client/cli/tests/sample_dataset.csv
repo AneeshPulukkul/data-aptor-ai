@@ -1,0 +1,11 @@
+id,name,age,city,income
+1,John Doe,32,New York,85000
+2,Jane Smith,28,San Francisco,92000
+3,Mike Johnson,45,Chicago,78000
+4,Sarah Williams,36,Boston,88000
+5,Alex Brown,29,Seattle,76000
+6,Emily Davis,41,Austin,95000
+7,Robert Wilson,,Denver,82000
+8,Michelle Garcia,33,Miami,79000
+9,David Lee,37,Portland,91000
+10,Jennifer Taylor,31,Los Angeles,84000
