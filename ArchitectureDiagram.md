@@ -36,16 +36,16 @@ graph TD
     
     %% Data Storage Layer
     subgraph DataStorageLayer["Data Storage Layer"]
-        MetadataDB[(Metadata DB<br>(PostgreSQL))]
-        TempStorage[("Temporary Storage<br>(AWS S3)")]
-        ReportStorage[("Report Storage<br>(AWS S3)")]
+        MetadataDB["Metadata DB\n(PostgreSQL)"]
+        TempStorage["Temporary Storage\n(AWS S3)"]
+        ReportStorage["Report Storage\n(AWS S3)"]
     end
     
     %% External Integrations Layer
     subgraph ExternalIntegrationsLayer["External Integrations Layer"]
-        CloudStorage[("Cloud Storage<br>(S3/GCP/Azure)")]
-        ExternalDB[(External DB<br>(MySQL/PostgreSQL/MongoDB))]
-        AIPipelines["AI/ML Pipelines<br>(TensorFlow/PyTorch/SageMaker)"]
+        CloudStorage["Cloud Storage\n(S3/GCP/Azure)"]
+        ExternalDB["External DB\n(MySQL/PostgreSQL/MongoDB)"]
+        AIPipelines["AI/ML Pipelines\n(TensorFlow/PyTorch/SageMaker)"]
         ExternalAPIs["External APIs"]
     end
     
