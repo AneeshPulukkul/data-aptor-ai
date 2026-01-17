@@ -14,6 +14,28 @@ DataAptor AI helps data scientists, engineers, and organizations evaluate the re
 - Integration with popular data storage platforms and AI/ML pipelines
 - Support for various dataset types (CSV, JSON, XML, text, images, audio)
 
+## Screenshots
+
+### Dashboard
+The main dashboard provides an overview of all datasets, their assessment scores, and readiness distribution.
+
+![Dashboard](docs/screenshots/dashboard.png)
+
+### Upload Dataset
+Upload datasets in various formats (CSV, JSON, TXT) with drag-and-drop support.
+
+![Upload](docs/screenshots/upload.png)
+
+### Assessment Configuration
+Configure assessment modules and trigger evaluations on your datasets.
+
+![Assessment](docs/screenshots/assessment.png)
+
+### Assessment Report
+View detailed assessment reports with score breakdowns, visualizations, and export options.
+
+![Reports](docs/screenshots/reports.png)
+
 ## Project Structure
 
 This repository is organized using a microservices architecture with the following key components:
