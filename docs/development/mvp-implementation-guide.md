@@ -136,7 +136,32 @@ boto3==1.26.129
 pydantic==1.10.7
 ```
 
-### 6. API Gateway
+### 6. Orchestration Service
+
+#### Priority Features
+- Workflow management for assessment process
+- Service coordination between processing services
+- User configuration handling (weights, module selection)
+- Background task processing for long-running assessments
+
+#### Implementation Steps
+1. Create orchestration API endpoints in FastAPI
+2. Implement workflow state management
+3. Add service coordination logic (Ingestion → Assessment → Scoring → Reporting)
+4. Develop background task processing for assessments
+5. Implement status tracking for workflows
+6. Add configuration handling for custom weights and modules
+
+#### Technical Requirements
+```python
+# requirements.txt
+fastapi==0.95.1
+uvicorn==0.22.0
+httpx==0.24.0
+pydantic==1.10.7
+```
+
+### 7. API Gateway
 
 #### Priority Features
 - Service routing
@@ -161,7 +186,7 @@ python-jose==3.3.0
 pydantic==1.10.7
 ```
 
-### 7. Web UI
+### 8. Web UI
 
 #### Priority Features (Completed)
 - Dataset upload interface (✓)
@@ -245,7 +270,7 @@ pydantic==1.10.7
 }
 ```
 
-### 8. CLI Tool
+### 9. CLI Tool
 
 #### Priority Features
 - Dataset upload command
@@ -326,6 +351,38 @@ CREATE TABLE reports (
 ```
 
 ## API Contracts
+
+### Orchestration Service
+
+```
+POST /api/datasets/upload
+- Accepts multipart/form-data with file
+- Forwards to Ingestion Service
+- Returns dataset metadata and ID
+
+GET /api/datasets
+- Lists all datasets
+
+GET /api/datasets/{dataset_id}
+- Returns dataset details
+
+POST /api/assessments
+- Accepts dataset_id, optional modules, optional weights
+- Starts assessment workflow in background
+- Returns assessment ID and status
+
+GET /api/assessments/{assessment_id}
+- Returns assessment details and results
+
+GET /api/assessments/{assessment_id}/status
+- Returns current assessment status
+
+GET /api/reports/{assessment_id}
+- Returns completed assessment report
+
+GET /api/reports/{assessment_id}/export?format={json|csv|html|pdf}
+- Exports report in specified format
+```
 
 ### Ingestion Service
 
