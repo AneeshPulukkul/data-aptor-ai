@@ -1,0 +1,561 @@
+openapi: 3.0.3
+info:
+  title: DataAptor AI API
+  description: |
+    DataAptor AI is a comprehensive platform for assessing the AI readiness of datasets.
+    This API provides endpoints for uploading datasets, running assessments, calculating scores,
+    and generating reports.
+  version: 0.1.0
+  contact:
+    name: DataAptor AI Support
+    url: https://github.com/AneeshPulukkul/data-aptor-ai
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+  - url: https://api.dataaptor.ai
+    description: Production server
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Datasets
+    description: Dataset upload and management
+  - name: Assessments
+    description: AI readiness assessments
+  - name: Reports
+    description: Assessment reports and exports
+
+security:
+  - bearerAuth: []
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Check the health status of the API
+      tags:
+        - Health
+      security: []
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /api/auth/login:
+    post:
+      summary: Login
+      description: Authenticate and receive a JWT token
+      tags:
+        - Authentication
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successfully authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth/refresh:
+    post:
+      summary: Refresh token
+      description: Refresh an expiring JWT token
+      tags:
+        - Authentication
+      responses:
+        '200':
+          description: Token refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          description: Invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/datasets/upload:
+    post:
+      summary: Upload dataset
+      description: Upload a new dataset for assessment
+      tags:
+        - Datasets
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The dataset file
+                name:
+                  type: string
+                  description: Optional name for the dataset
+              required:
+                - file
+      responses:
+        '200':
+          description: Dataset uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetResponse'
+        '413':
+          description: File too large
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '415':
+          description: Unsupported file type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/datasets:
+    get:
+      summary: List datasets
+      description: Get a paginated list of datasets
+      tags:
+        - Datasets
+      parameters:
+        - name: skip
+          in: query
+          schema:
+            type: integer
+            default: 0
+          description: Number of records to skip
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+            maximum: 100
+          description: Maximum records to return
+      responses:
+        '200':
+          description: List of datasets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetListResponse'
+
+  /api/datasets/{dataset_id}:
+    get:
+      summary: Get dataset
+      description: Get details of a specific dataset
+      tags:
+        - Datasets
+      parameters:
+        - name: dataset_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Dataset ID
+      responses:
+        '200':
+          description: Dataset details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetResponse'
+        '404':
+          description: Dataset not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete dataset
+      description: Delete a dataset and its associated data
+      tags:
+        - Datasets
+      parameters:
+        - name: dataset_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Dataset ID
+      responses:
+        '200':
+          description: Dataset deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Dataset not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/assessments:
+    post:
+      summary: Start assessment
+      description: Start a new assessment for a dataset
+      tags:
+        - Assessments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssessmentRequest'
+      responses:
+        '200':
+          description: Assessment started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentResponse'
+        '404':
+          description: Dataset not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/assessments/{assessment_id}/status:
+    get:
+      summary: Get assessment status
+      description: Check the status of an assessment
+      tags:
+        - Assessments
+      parameters:
+        - name: assessment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Assessment ID
+      responses:
+        '200':
+          description: Assessment status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentStatusResponse'
+        '404':
+          description: Assessment not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/reports/{assessment_id}:
+    get:
+      summary: Get report
+      description: Get the assessment report
+      tags:
+        - Reports
+      parameters:
+        - name: assessment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Assessment ID
+      responses:
+        '200':
+          description: Assessment report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportResponse'
+        '404':
+          description: Report not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/reports/{assessment_id}/export:
+    get:
+      summary: Export report
+      description: Export the report in various formats
+      tags:
+        - Reports
+      parameters:
+        - name: assessment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Assessment ID
+        - name: format
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [json, csv, html, pdf]
+          description: Export format
+      responses:
+        '200':
+          description: Exported report
+          content:
+            application/json:
+              schema:
+                type: object
+            text/csv:
+              schema:
+                type: string
+            text/html:
+              schema:
+                type: string
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Report not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: healthy
+        version:
+          type: string
+          example: 0.1.0
+        uptime:
+          type: number
+          example: 3600.5
+
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          example: user@example.com
+        password:
+          type: string
+          format: password
+
+    TokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+          example: bearer
+        expires_in:
+          type: integer
+          example: 3600
+
+    DatasetResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        file_type:
+          type: string
+        file_size:
+          type: integer
+        file_path:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        metadata:
+          type: object
+
+    DatasetListResponse:
+      type: object
+      properties:
+        datasets:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatasetResponse'
+        total:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+
+    AssessmentRequest:
+      type: object
+      required:
+        - dataset_id
+      properties:
+        dataset_id:
+          type: integer
+        modules:
+          type: array
+          items:
+            type: string
+            enum: [quality, accessibility, governance, ai_compatibility, diversity]
+        weights:
+          type: object
+          properties:
+            quality:
+              type: number
+            accessibility:
+              type: number
+            governance:
+              type: number
+            ai_compatibility:
+              type: number
+            diversity:
+              type: number
+
+    AssessmentResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        dataset_id:
+          type: integer
+        status:
+          type: string
+          enum: [pending, assessing, completed, failed]
+        modules:
+          type: array
+          items:
+            type: string
+        created_at:
+          type: string
+          format: date-time
+
+    AssessmentStatusResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        status:
+          type: string
+        progress:
+          type: integer
+        current_module:
+          type: string
+        started_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+
+    ReportResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        assessment_id:
+          type: integer
+        overall_score:
+          type: number
+        readiness_level:
+          type: string
+          enum: [high, moderate, low, not_ready]
+        module_scores:
+          type: object
+        findings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Finding'
+        recommendations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recommendation'
+        created_at:
+          type: string
+          format: date-time
+
+    Finding:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+        severity:
+          type: string
+          enum: [critical, high, medium, low]
+        module:
+          type: string
+        description:
+          type: string
+        affected_columns:
+          type: array
+          items:
+            type: string
+        recommendation:
+          type: string
+
+    Recommendation:
+      type: object
+      properties:
+        id:
+          type: integer
+        priority:
+          type: string
+          enum: [critical, high, medium, low]
+        category:
+          type: string
+        issue:
+          type: string
+        action:
+          type: string
+        impact:
+          type: string
+        effort:
+          type: string
+          enum: [low, medium, high]
+
+    ErrorResponse:
+      type: object
+      properties:
+        detail:
+          type: string
+        status_code:
+          type: integer
