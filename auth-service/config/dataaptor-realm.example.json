@@ -1,0 +1,279 @@
+{
+  "realm": "dataaptor",
+  "enabled": true,
+  "displayName": "DataAptor AI",
+  "displayNameHtml": "<strong>DataAptor AI</strong>",
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "permanentLockout": false,
+  "maxFailureWaitSeconds": 900,
+  "minimumQuickLoginWaitSeconds": 60,
+  "waitIncrementSeconds": 60,
+  "quickLoginCheckMilliSeconds": 1000,
+  "maxDeltaTimeSeconds": 43200,
+  "failureFactor": 5,
+  "roles": {
+    "realm": [
+      {
+        "name": "admin",
+        "description": "Administrator with full access",
+        "composite": false
+      },
+      {
+        "name": "analyst",
+        "description": "Data analyst with read/write access to datasets and assessments",
+        "composite": false
+      },
+      {
+        "name": "viewer",
+        "description": "Read-only access to reports",
+        "composite": false
+      }
+    ],
+    "client": {
+      "dataaptor-api": [
+        {
+          "name": "manage-datasets",
+          "description": "Can upload, modify, and delete datasets"
+        },
+        {
+          "name": "run-assessments",
+          "description": "Can trigger and manage assessments"
+        },
+        {
+          "name": "view-reports",
+          "description": "Can view assessment reports"
+        },
+        {
+          "name": "export-reports",
+          "description": "Can export reports in various formats"
+        },
+        {
+          "name": "manage-users",
+          "description": "Can manage user accounts (admin only)"
+        }
+      ]
+    }
+  },
+  "groups": [
+    {
+      "name": "administrators",
+      "realmRoles": ["admin"]
+    },
+    {
+      "name": "analysts",
+      "realmRoles": ["analyst"]
+    },
+    {
+      "name": "viewers",
+      "realmRoles": ["viewer"]
+    }
+  ],
+  "defaultRoles": ["viewer"],
+  "clients": [
+    {
+      "clientId": "dataaptor-api",
+      "name": "DataAptor API",
+      "description": "DataAptor AI Backend API",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "CHANGE_ME_IN_PRODUCTION",
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "http://localhost:8000/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3000",
+        "http://localhost:8000"
+      ],
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "frontchannelLogout": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "access.token.lifespan": "3600",
+        "saml.assertion.signature": "false",
+        "saml.multivalued.roles": "false",
+        "saml.force.post.binding": "false",
+        "saml.encrypt": "false",
+        "saml.server.signature": "false",
+        "saml.server.signature.keyinfo.ext": "false",
+        "exclude.session.state.from.auth.response": "false",
+        "saml_force_name_id_format": "false",
+        "saml.client.signature": "false",
+        "tls.client.certificate.bound.access.tokens": "false",
+        "saml.authnstatement": "false",
+        "display.on.consent.screen": "false",
+        "saml.onetimeuse.condition": "false"
+      },
+      "fullScopeAllowed": true,
+      "defaultClientScopes": [
+        "web-origins",
+        "roles",
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
+      "clientId": "dataaptor-web",
+      "name": "DataAptor Web UI",
+      "description": "DataAptor AI Web Interface",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "redirectUris": [
+        "http://localhost:3000/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3000"
+      ],
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "publicClient": true,
+      "frontchannelLogout": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "access.token.lifespan": "3600",
+        "pkce.code.challenge.method": "S256"
+      },
+      "fullScopeAllowed": true,
+      "defaultClientScopes": [
+        "web-origins",
+        "roles",
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access"
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Admin",
+      "lastName": "User",
+      "email": "admin@dataaptor.local",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "CHANGE_ME",
+          "temporary": true
+        }
+      ],
+      "realmRoles": ["admin"],
+      "clientRoles": {
+        "dataaptor-api": ["manage-datasets", "run-assessments", "view-reports", "export-reports", "manage-users"]
+      },
+      "groups": ["administrators"]
+    },
+    {
+      "username": "analyst",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Analyst",
+      "lastName": "User",
+      "email": "analyst@dataaptor.local",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "CHANGE_ME",
+          "temporary": true
+        }
+      ],
+      "realmRoles": ["analyst"],
+      "clientRoles": {
+        "dataaptor-api": ["manage-datasets", "run-assessments", "view-reports", "export-reports"]
+      },
+      "groups": ["analysts"]
+    },
+    {
+      "username": "viewer",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Viewer",
+      "lastName": "User",
+      "email": "viewer@dataaptor.local",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "CHANGE_ME",
+          "temporary": true
+        }
+      ],
+      "realmRoles": ["viewer"],
+      "clientRoles": {
+        "dataaptor-api": ["view-reports"]
+      },
+      "groups": ["viewers"]
+    }
+  ],
+  "scopeMappings": [
+    {
+      "client": "dataaptor-api",
+      "roles": ["admin", "analyst", "viewer"]
+    }
+  ],
+  "clientScopeMappings": {
+    "dataaptor-api": [
+      {
+        "client": "dataaptor-web",
+        "roles": ["manage-datasets", "run-assessments", "view-reports", "export-reports"]
+      }
+    ]
+  },
+  "browserSecurityHeaders": {
+    "contentSecurityPolicyReportOnly": "",
+    "xContentTypeOptions": "nosniff",
+    "xRobotsTag": "none",
+    "xFrameOptions": "SAMEORIGIN",
+    "contentSecurityPolicy": "frame-src 'self'; frame-ancestors 'self'; object-src 'none';",
+    "xXSSProtection": "1; mode=block",
+    "strictTransportSecurity": "max-age=31536000; includeSubDomains"
+  },
+  "smtpServer": {},
+  "eventsEnabled": true,
+  "eventsListeners": ["jboss-logging"],
+  "enabledEventTypes": [
+    "LOGIN",
+    "LOGIN_ERROR",
+    "LOGOUT",
+    "LOGOUT_ERROR",
+    "REGISTER",
+    "REGISTER_ERROR",
+    "CODE_TO_TOKEN",
+    "CODE_TO_TOKEN_ERROR"
+  ],
+  "adminEventsEnabled": true,
+  "adminEventsDetailsEnabled": true,
+  "internationalizationEnabled": false,
+  "supportedLocales": [],
+  "browserFlow": "browser",
+  "registrationFlow": "registration",
+  "directGrantFlow": "direct grant",
+  "resetCredentialsFlow": "reset credentials",
+  "clientAuthenticationFlow": "clients"
+}
