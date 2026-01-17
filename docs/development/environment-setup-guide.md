@@ -24,38 +24,47 @@ cd data-aptor-ai
 
 ### 2. Environment Variables
 
-Create a `.env` file in the root directory with the following variables:
+Copy the `.env.example` file to `.env` and update the values:
+
+```bash
+cp .env.example .env
+```
+
+The environment file contains the following configuration:
 
 ```
 # Database Configuration
-POSTGRES_USER=dataaptor
-POSTGRES_PASSWORD=yourpassword
 POSTGRES_DB=dataaptor
-POSTGRES_HOST=postgres
-POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=your-secure-password
+
+# Keycloak Configuration
+KEYCLOAK_ADMIN=admin
+KEYCLOAK_ADMIN_PASSWORD=your-secure-admin-password
+KC_DB_USERNAME=keycloak
+KC_DB_PASSWORD=your-secure-keycloak-password
 
 # MinIO Configuration
-MINIO_ROOT_USER=minioadmin
-MINIO_ROOT_PASSWORD=minioadmin
-MINIO_HOST=minio
-MINIO_PORT=9000
-
-# API Configuration
-API_GATEWAY_PORT=8000
-AUTH_SERVICE_PORT=8001
-INGESTION_SERVICE_PORT=8002
-ASSESSMENT_SERVICE_PORT=8003
-SCORING_SERVICE_PORT=8004
-REPORTING_SERVICE_PORT=8005
-
-# Web UI Configuration
-WEB_UI_PORT=3000
+MINIO_ROOT_USER=minio
+MINIO_ROOT_PASSWORD=your-secure-minio-password
 
 # JWT Configuration
-JWT_SECRET=your-secret-key
-JWT_ALGORITHM=HS256
-JWT_EXPIRATION=3600
+JWT_SECRET=your-secure-jwt-secret-at-least-32-characters
 ```
+
+**Service Ports (configured in docker-compose.yml):**
+| Service | Port |
+|---------|------|
+| Web UI | 3000 |
+| API Gateway | 8000 |
+| Keycloak (Auth) | 8080 |
+| Orchestration Service | 8001 |
+| Ingestion Service | 8002 |
+| Assessment Service | 8003 |
+| Scoring Service | 8004 |
+| Reporting Service | 8005 |
+| PostgreSQL | 5432 |
+| MinIO | 9000, 9001 |
 
 ### 3. Start Docker Services
 
@@ -75,8 +84,8 @@ This will start all the required services:
 For local development without Docker, you can set up the Python environment for each service:
 
 ```bash
-# Navigate to the service directory (repeat for each service)
-cd services/ingestion-service
+# Navigate to the service directory (example: ingestion-service)
+cd processing/ingestion-service
 
 # Create and activate a virtual environment
 python -m venv venv
@@ -92,6 +101,14 @@ pip install -r requirements.txt
 uvicorn main:app --reload --port 8002
 ```
 
+**Service directories and ports:**
+- `api-gateway/` - port 8000
+- `orchestration-service/` - port 8001
+- `processing/ingestion-service/` - port 8002
+- `processing/assessment-service/` - port 8003
+- `processing/scoring-service/` - port 8004
+- `processing/reporting-service/` - port 8005
+
 ### 5. Set Up Frontend Development
 
 ```bash
@@ -102,7 +119,7 @@ cd client
 npm install
 
 # Start the development server
-npm run dev
+npm start
 ```
 
 ## Database Setup

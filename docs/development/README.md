@@ -4,11 +4,10 @@ This guide provides instructions for setting up the DataAptor AI development env
 
 ## Prerequisites
 
-- Docker and Docker Compose
-- Python 3.8+
-- Node.js 14+
-- PostgreSQL (for local development without Docker)
-- AWS CLI (for S3 integration testing)
+- Docker (20.10+) and Docker Compose (2.0+)
+- Python 3.10+
+- Node.js 18+
+- Git 2.30+
 
 ## Setup
 
@@ -57,14 +56,33 @@ For a detailed understanding of the project structure, please refer to the [Proj
 
 ## Testing
 
-- Run unit tests: `scripts/run_unit_tests.sh`
-- Run integration tests: `scripts/run_integration_tests.sh`
-- Run end-to-end tests: `scripts/run_e2e_tests.sh`
+Run tests for individual services:
+
+```bash
+# API Gateway tests
+cd api-gateway && pytest tests/
+
+# Processing service tests
+cd processing/assessment-service && pytest tests/
+cd processing/scoring-service && pytest tests/
+cd processing/reporting-service && pytest tests/
+
+# CLI tests
+cd client/cli && ./run_tests.sh
+```
 
 ## Building for Production
 
-- Build Docker images: `scripts/build_images.sh`
-- Deploy to Kubernetes: `scripts/deploy_to_k8s.sh`
+```bash
+# Build all Docker images
+docker-compose build
+
+# Or build individual services
+docker-compose build api-gateway
+docker-compose build assessment-service
+```
+
+See [Production Deployment Guide](../deployment/production-deploy.md) for full deployment instructions.
 
 ## Microservices Development
 
