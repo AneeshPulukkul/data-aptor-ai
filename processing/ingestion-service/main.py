@@ -248,6 +248,118 @@ async def list_datasets(
         "page_size": limit
     }
 
+@app.get("/api/ingestion/datasets/{dataset_id}/data", response_model=dict, responses={404: {"model": ErrorResponse}})
+async def get_dataset_data(dataset_id: int, db: Session = Depends(get_db)):
+    """Get the actual data records from a dataset
+    
+    This endpoint retrieves the data records from a dataset for assessment purposes.
+    """
+    dataset = ingestion_service.get_dataset(dataset_id, db)
+    
+    if not dataset:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Dataset with ID {dataset_id} not found"
+        )
+    
+    try:
+        # Download file from storage to temp location
+        temp_file_path = config.TEMP_UPLOAD_DIR / f"data_{dataset_id}_{dataset.name}"
+        os.makedirs(config.TEMP_UPLOAD_DIR, exist_ok=True)
+        
+        # Get file from storage
+        ingestion_service.storage_client.client.download_file(
+            config.DATASET_BUCKET,
+            dataset.file_path,
+            str(temp_file_path)
+        )
+        
+        # Parse the file based on type
+        records = []
+        if dataset.file_type in ["csv", "xlsx", "xls"]:
+            import pandas as pd
+            if dataset.file_type == "csv":
+                df = pd.read_csv(temp_file_path)
+            else:
+                df = pd.read_excel(temp_file_path)
+            records = df.to_dict(orient="records")
+        elif dataset.file_type == "json":
+            with open(temp_file_path, "r") as f:
+                data = json.load(f)
+                if isinstance(data, list):
+                    records = data
+                elif isinstance(data, dict):
+                    records = [data]
+        else:
+            # For other file types, return metadata only
+            records = []
+        
+        # Clean up temp file
+        if os.path.exists(temp_file_path):
+            os.remove(temp_file_path)
+        
+        return {
+            "dataset_id": dataset_id,
+            "records": records[:10000],  # Limit to 10k records for performance
+            "total_records": len(records),
+            "truncated": len(records) > 10000
+        }
+    except Exception as e:
+        logger.error(f"Error retrieving dataset data: {str(e)}")
+        # Return empty records if file retrieval fails (for standalone testing)
+        return {
+            "dataset_id": dataset_id,
+            "records": [],
+            "total_records": 0,
+            "truncated": False,
+            "error": str(e)
+        }
+
+
+@app.get("/api/ingestion/datasets/{dataset_id}", response_model=DatasetResponse, responses={404: {"model": ErrorResponse}})
+async def get_dataset_api(dataset_id: int, db: Session = Depends(get_db)):
+    """Get dataset details by ID (API path)
+    
+    This endpoint retrieves the details of a specific dataset by its ID.
+    """
+    return await get_dataset(dataset_id, db)
+
+
+@app.get("/api/ingestion/datasets", response_model=DatasetList)
+async def list_datasets_api(
+    skip: int = Query(0, ge=0, description="Number of records to skip"),
+    limit: int = Query(10, ge=1, le=100, description="Maximum number of records to return"),
+    db: Session = Depends(get_db)
+):
+    """List all datasets with pagination (API path)
+    
+    This endpoint retrieves a paginated list of all datasets.
+    """
+    return await list_datasets(skip, limit, db)
+
+
+@app.post("/api/ingestion/upload", response_model=DatasetResponse, responses={413: {"model": ErrorResponse}, 415: {"model": ErrorResponse}})
+async def upload_file_api(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
+    """Upload a dataset file for AI readiness assessment (API path)
+    
+    This endpoint accepts file uploads for assessment.
+    """
+    return await upload_file(background_tasks, file, db)
+
+
+@app.delete("/api/ingestion/datasets/{dataset_id}", response_model=dict, responses={404: {"model": ErrorResponse}})
+async def delete_dataset_api(dataset_id: int, db: Session = Depends(get_db)):
+    """Delete a dataset by ID (API path)
+    
+    This endpoint deletes a dataset and its associated file from storage.
+    """
+    return await delete_dataset(dataset_id, db)
+
+
 @app.delete("/datasets/{dataset_id}", response_model=dict, responses={404: {"model": ErrorResponse}})
 async def delete_dataset(dataset_id: int, db: Session = Depends(get_db)):
     """Delete a dataset by ID

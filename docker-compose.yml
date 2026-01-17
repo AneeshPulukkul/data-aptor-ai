@@ -4,11 +4,11 @@ services:
   # Client Layer
   web-ui:
     build:
-      context: ./client/web-ui
+      context: ./client
     ports:
       - "3000:3000"
     volumes:
-      - ./client/web-ui:/app
+      - ./client:/app
       - /app/node_modules
     environment:
       - NODE_ENV=development
