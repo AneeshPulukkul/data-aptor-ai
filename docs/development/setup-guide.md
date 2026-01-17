@@ -15,17 +15,22 @@ The DataAptor AI project follows a microservices architecture with the following
 
 ```
 data-aptor-ai/
-├── client/                 # Frontend web application
-├── services/               # Backend microservices
-│   ├── api-gateway/        # API Gateway service
-│   ├── auth-service/       # Authentication service
-│   ├── ingestion-service/  # Data ingestion service
-│   ├── assessment-service/ # AI readiness assessment service
-│   ├── scoring-service/    # Scoring service
-│   └── reporting-service/  # Reporting service
-├── scripts/                # Utility scripts
-├── docs/                   # Documentation
-└── deployment/             # Deployment configurations
+├── client/                     # Client Layer (Web UI + CLI)
+│   ├── src/                    # React web application
+│   └── cli/                    # Python CLI tool
+├── api-gateway/                # Application Layer - API Gateway (port 8000)
+├── auth-service/               # Application Layer - Keycloak config (port 8080)
+├── orchestration-service/      # Application Layer - Workflow coordination (port 8001)
+├── processing/                 # Processing Layer services
+│   ├── ingestion-service/      # Data ingestion (port 8002)
+│   ├── assessment-service/     # AI readiness assessment (port 8003)
+│   ├── scoring-service/        # Scoring service (port 8004)
+│   └── reporting-service/      # Reporting service (port 8005)
+├── storage/                    # Database initialization scripts
+├── scripts/                    # Utility scripts
+├── docs/                       # Documentation
+├── docker-compose.yml          # Docker Compose configuration
+└── .env.example                # Environment variables template
 ```
 
 ## Implementation Workflow
