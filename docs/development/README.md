@@ -72,4 +72,4 @@ Each microservice has its own directory with a README.md file containing service
 
 ## Contributing
 
-Please see the [Contributing Guide](CONTRIBUTING.md) for details on how to contribute to the project.
+Please see the [Contributing Guide](../../CONTRIBUTING.md) for details on how to contribute to the project.
