@@ -117,3 +117,59 @@ This document outlines the architecture and relationships between services in th
 - **Authorization**: Role-based access control for fine-grained permissions
 - **Encryption**: TLS for all service communication, encryption at rest for data
 - **PII Detection**: Automatic detection and handling of sensitive information
+
+## Deployment Configuration
+
+### Service Ports
+
+| Service | Port | Health Check Endpoint |
+|---------|------|----------------------|
+| Web UI | 3000 | `http://localhost:3000/` |
+| API Gateway | 8000 | `http://localhost:8000/health` |
+| Keycloak (Auth) | 8080 | `http://localhost:8080/health/ready` |
+| Orchestration Service | 8001 | `http://localhost:8001/health` |
+| Ingestion Service | 8002 | `http://localhost:8002/health` |
+| Assessment Service | 8003 | `http://localhost:8003/health` |
+| Scoring Service | 8004 | `http://localhost:8004/health` |
+| Reporting Service | 8005 | `http://localhost:8005/health` |
+| PostgreSQL | 5432 | `pg_isready` |
+| MinIO (S3) | 9000, 9001 | `http://localhost:9000/minio/health/live` |
+
+### Docker Compose Deployment
+
+The platform is deployed using Docker Compose with health checks and proper service dependencies:
+
+```bash
+# Quick start
+cp .env.example .env
+# Edit .env with your settings
+docker-compose up -d
+```
+
+Services start in the following order based on health check dependencies:
+1. PostgreSQL and MinIO (storage layer)
+2. Keycloak (authentication)
+3. Processing services (Ingestion, Assessment, Scoring, Reporting)
+4. Orchestration Service
+5. API Gateway
+6. Web UI
+
+### Environment Configuration
+
+All services use environment variables for configuration. See `.env.example` for the full list of configurable options:
+
+- **Database**: `POSTGRES_*` variables for PostgreSQL connection
+- **Authentication**: `KEYCLOAK_*` and `KC_*` variables for Keycloak
+- **Storage**: `MINIO_*` variables for object storage
+- **Security**: `JWT_SECRET` for API authentication
+
+### Storage Layer
+
+- **PostgreSQL**: Metadata database for datasets, assessments, scores, and reports
+- **MinIO**: S3-compatible object storage for dataset files and generated reports (can be replaced with AWS S3, GCS, or Azure Blob in production)
+
+## Related Documentation
+
+- [Quick Deploy Guide](../deployment/quick-deploy.md) - Local development deployment
+- [Production Deployment Guide](../deployment/production-deploy.md) - Production deployment
+- [API Documentation](../api/README.md) - API reference
