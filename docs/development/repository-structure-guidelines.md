@@ -16,16 +16,27 @@ Each microservice should follow a consistent structure:
 
 ```
 service-name/
-├── src/                   # Source code
-│   ├── main.py            # Entry point
-│   ├── api/               # API endpoints
-│   ├── core/              # Core business logic
-│   ├── models/            # Data models
-│   └── utils/             # Utility functions
+├── main.py                # FastAPI application entry point
+├── src/                   # Additional source code (optional)
 ├── tests/                 # Service-specific tests
 ├── Dockerfile             # Container definition
-├── requirements.txt       # Python dependencies
-└── README.md              # Service documentation
+└── requirements.txt       # Python dependencies
+```
+
+For more complex services (like ingestion-service), additional files may be added at the root level:
+
+```
+ingestion-service/
+├── main.py                # FastAPI application entry point
+├── processor.py           # Data processing logic
+├── service.py             # Service layer
+├── storage.py             # Storage operations
+├── schemas.py             # Pydantic models
+├── config.py              # Configuration
+├── database.py            # Database operations
+├── tests/                 # Service-specific tests
+├── Dockerfile             # Container definition
+└── requirements.txt       # Python dependencies
 ```
 
 ### Component Structure

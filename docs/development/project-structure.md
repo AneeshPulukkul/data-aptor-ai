@@ -6,60 +6,69 @@ This document provides a comprehensive overview of the DataAptor AI project stru
 
 ```
 data-aptor-ai/
-├── .github/                         # GitHub workflows and CI/CD configurations
-├── client/                          # Client Layer components
-├── api-gateway/                     # Application Layer - API Gateway
-├── auth-service/                    # Application Layer - Authentication Service
-├── orchestration-service/           # Application Layer - Orchestration Service
+├── client/                          # Client Layer (Web UI + CLI)
+├── api-gateway/                     # Application Layer - API Gateway (port 8000)
+├── auth-service/                    # Application Layer - Keycloak config (port 8080)
+├── orchestration-service/           # Application Layer - Orchestration Service (port 8001)
 ├── processing/                      # Processing Layer services
+│   ├── ingestion-service/           # Data ingestion (port 8002)
+│   ├── assessment-service/          # AI readiness assessment (port 8003)
+│   ├── scoring-service/             # Scoring service (port 8004)
+│   └── reporting-service/           # Reporting service (port 8005)
 ├── storage/                         # Data Storage Layer components
-├── integrations/                    # External Integrations Layer
-├── common/                          # Shared libraries and utilities
 ├── docs/                            # Documentation
-├── tests/                           # Automated tests
-├── deployment/                      # Deployment configurations
 ├── scripts/                         # Utility scripts
+├── .env.example                     # Environment variables template
 ├── .gitignore                       # Git ignore file
 ├── README.md                        # Project overview
 ├── LICENSE                          # License information
-└── docker-compose.yml               # Development environment setup
+└── docker-compose.yml               # Docker Compose configuration
 ```
 
 ## Detailed Structure
-
-### GitHub Workflows (.github/)
-
-```
-.github/
-└── workflows/                       # CI/CD workflow definitions
-```
-
-This directory contains GitHub Actions workflow configurations for continuous integration and deployment processes.
 
 ### Client Layer (client/)
 
 ```
 client/
-├── web-ui/                          # React.js web interface
-│   ├── public/                      # Static assets
-│   ├── src/                         # Source code
-│   │   ├── components/              # Reusable UI components
-│   │   ├── pages/                   # Page components (Dashboard, Upload, Results)
-│   │   ├── services/                # API client services
-│   │   └── utils/                   # Utility functions
-│   ├── package.json                 # Dependencies and scripts
-│   └── README.md                    # Web UI documentation
-│
-└── cli/                             # Python CLI tool
-    ├── src/                         # CLI source code
-    ├── setup.py                     # Package installation
-    └── README.md                    # CLI documentation
+├── public/                          # Static assets
+│   └── index.html                   # SPA entry point
+├── src/                             # React application source code
+│   ├── assets/                      # Images, logos
+│   ├── components/                  # Reusable UI components
+│   │   ├── Alert.js                 # Notification component
+│   │   ├── Button.js                # Interactive button
+│   │   ├── Card.js                  # Container component
+│   │   ├── LoadingSpinner.js        # Loading indicator
+│   │   └── Navbar.js                # Navigation header
+│   ├── pages/                       # Page components
+│   │   ├── Dashboard.js             # Dataset overview
+│   │   ├── Upload.js                # Dataset upload wizard
+│   │   ├── Assessment.js            # Assessment configuration
+│   │   └── Reports.js               # Report visualization
+│   ├── services/
+│   │   └── api.js                   # Centralized API client
+│   ├── utils/
+│   │   └── helpers.js               # Utility functions
+│   └── mocks/                       # Development mock data
+├── cli/                             # Python CLI tool
+│   ├── dataaptor.py                 # CLI entry point (Click)
+│   ├── src/                         # CLI source code
+│   │   ├── api_client.py            # HTTP client for API
+│   │   ├── commands.py              # CLI command implementations
+│   │   └── utils.py                 # Output formatting
+│   ├── tests/                       # CLI tests
+│   └── run_tests.sh                 # Test runner
+├── package.json                     # NPM dependencies
+├── Dockerfile                       # Container definition
+├── tailwind.config.js               # Tailwind CSS configuration
+└── README.md                        # Web UI documentation
 ```
 
 The client layer contains all user-facing interfaces:
 
-- **web-ui/**: React.js-based web application with Tailwind CSS and Chart.js for visualizations
-- **cli/**: Python-based command-line interface using Click library for programmatic access
+- **Web UI**: React.js-based web application with Tailwind CSS and Chart.js for visualizations
+- **CLI**: Python-based command-line interface using Click library for programmatic access
 
 ### Application Layer
 
@@ -67,16 +76,14 @@ The client layer contains all user-facing interfaces:
 
 ```
 api-gateway/
-├── src/                             # Gateway source code
-│   ├── routes/                      # API route definitions
-│   ├── middleware/                  # Authentication, rate limiting
-│   └── utils/                       # Utility functions
+├── main.py                          # FastAPI application entry point
+├── src/                             # Additional source code
+├── tests/                           # Unit tests
 ├── Dockerfile                       # Container definition
-├── requirements.txt                 # Python dependencies
-└── README.md                        # Gateway documentation
+└── requirements.txt                 # Python dependencies
 ```
 
-The API Gateway service (using FastAPI) handles authentication, rate limiting, and routing of API requests to the appropriate microservices.
+The API Gateway service (using FastAPI) handles authentication, rate limiting, and routing of API requests to the appropriate microservices. It runs on port 8000.
 
 #### Authentication Service (auth-service/)
 
@@ -93,70 +100,54 @@ The Authentication Service (based on Keycloak) provides OAuth 2.0 and JWT-based 
 
 ```
 orchestration-service/
-├── src/                             # Service source code
-│   ├── workflows/                   # Workflow definitions
-│   ├── config/                      # Service configuration
-│   └── utils/                       # Utility functions
+├── main.py                          # FastAPI application entry point
+├── src/                             # Additional source code
+├── tests/                           # Unit tests
 ├── Dockerfile                       # Container definition
-├── requirements.txt                 # Python dependencies
-└── README.md                        # Orchestration documentation
+└── requirements.txt                 # Python dependencies
 ```
 
-The Orchestration Service (using FastAPI) coordinates workflow management between services, handling user configurations and service coordination.
+The Orchestration Service (using FastAPI) coordinates workflow management between services, handling user configurations and service coordination. It runs on port 8001.
 
 ### Processing Layer (processing/)
 
 ```
 processing/
-├── ingestion-service/               # Ingestion Service
-│   ├── src/                         # Service source code
-│   │   ├── parsers/                 # Format-specific parsers
-│   │   │   ├── structured/          # CSV, tabular parsers
-│   │   │   ├── semi_structured/     # JSON, XML parsers
-│   │   │   └── unstructured/        # Text, image, audio parsers
-│   │   ├── validators/              # Data validation
-│   │   └── utils/                   # Utility functions
+├── ingestion-service/               # Ingestion Service (port 8002)
+│   ├── main.py                      # FastAPI application entry point
+│   ├── processor.py                 # Data processing logic
+│   ├── service.py                   # Service layer
+│   ├── storage.py                   # Storage operations
+│   ├── schemas.py                   # Pydantic models
+│   ├── config.py                    # Configuration
+│   ├── database.py                  # Database operations
+│   ├── tests/                       # Unit tests
 │   ├── Dockerfile                   # Container definition
-│   ├── requirements.txt             # Python dependencies
-│   └── README.md                    # Ingestion documentation
+│   └── requirements.txt             # Python dependencies
 │
-├── assessment-service/              # Assessment Service
-│   ├── src/                         # Service source code
-│   │   ├── modules/                 # Assessment modules
-│   │   │   ├── data_quality/        # Quality assessment
-│   │   │   ├── accessibility/       # Accessibility assessment
-│   │   │   ├── governance/          # Governance assessment
-│   │   │   ├── ai_compatibility/    # AI compatibility assessment
-│   │   │   └── diversity/           # Diversity assessment
-│   │   └── utils/                   # Utility functions
+├── assessment-service/              # Assessment Service (port 8003)
+│   ├── main.py                      # FastAPI application entry point
+│   ├── tests/                       # Unit tests
 │   ├── Dockerfile                   # Container definition
-│   ├── requirements.txt             # Python dependencies
-│   └── README.md                    # Assessment documentation
+│   └── requirements.txt             # Python dependencies
 │
-├── scoring-service/                 # Scoring Service
-│   ├── src/                         # Service source code
-│   │   ├── algorithms/              # Scoring algorithms
-│   │   ├── weightings/              # Default and custom weightings
-│   │   └── utils/                   # Utility functions
+├── scoring-service/                 # Scoring Service (port 8004)
+│   ├── main.py                      # FastAPI application entry point
+│   ├── tests/                       # Unit tests
 │   ├── Dockerfile                   # Container definition
-│   ├── requirements.txt             # Python dependencies
-│   └── README.md                    # Scoring documentation
+│   └── requirements.txt             # Python dependencies
 │
-└── reporting-service/               # Reporting Service
-    ├── src/                         # Service source code
-    │   ├── templates/               # Report templates
-    │   ├── visualizations/          # Chart generation
-    │   ├── recommendations/         # Recommendation engine
-    │   └── utils/                   # Utility functions
+└── reporting-service/               # Reporting Service (port 8005)
+    ├── main.py                      # FastAPI application entry point
+    ├── tests/                       # Unit tests
     ├── Dockerfile                   # Container definition
-    ├── requirements.txt             # Python dependencies
-    └── README.md                    # Reporting documentation
+    └── requirements.txt             # Python dependencies
 ```
 
 The Processing Layer contains the core services that perform dataset assessment:
 
 - **ingestion-service/**: Handles file format validation, metadata extraction, and dataset storage management
-- **assessment-service/**: Performs assessment across multiple dimensions with specialized modules
+- **assessment-service/**: Performs assessment across multiple dimensions (quality, accessibility, governance, AI compatibility, diversity)
 - **scoring-service/**: Calculates AI readiness scores based on weighted criteria
 - **reporting-service/**: Generates reports, visualizations, and recommendations
 
@@ -164,71 +155,14 @@ The Processing Layer contains the core services that perform dataset assessment:
 
 ```
 storage/
-├── metadata-db/                     # PostgreSQL database scripts
-│   ├── migrations/                  # Schema migrations
-│   ├── init/                        # Initialization scripts
-│   └── README.md                    # Database documentation
-│
-└── storage-connectors/              # Storage service connectors
-    ├── src/                         # Connector source code
-    │   ├── temp_storage/            # Temporary storage
-    │   └── report_storage/          # Report storage
-    ├── Dockerfile                   # Container definition
-    ├── requirements.txt             # Python dependencies
-    └── README.md                    # Storage documentation
+└── metadata-db/                     # PostgreSQL database scripts
+    └── init/                        # Initialization scripts
 ```
 
-The Data Storage Layer manages persistent and temporary storage:
+The Data Storage Layer manages persistent storage:
 
-- **metadata-db/**: PostgreSQL database for metadata, assessment results, and user configurations
-- **storage-connectors/**: Connectors for temporary dataset storage and report storage (using AWS S3 or compatible storage)
-
-### External Integrations Layer (integrations/)
-
-```
-integrations/
-├── cloud-storage/                   # Cloud storage connectors
-│   ├── src/                         # Connector source code
-│   ├── Dockerfile                   # Container definition
-│   └── requirements.txt             # Python dependencies
-│
-├── databases/                       # Database connectors
-│   ├── src/                         # Connector source code
-│   ├── Dockerfile                   # Container definition
-│   └── requirements.txt             # Python dependencies
-│
-├── ai-pipelines/                    # AI/ML pipeline integrations
-│   ├── src/                         # Integration source code
-│   ├── Dockerfile                   # Container definition
-│   └── requirements.txt             # Python dependencies
-│
-└── external-apis/                   # External API integrations
-    ├── src/                         # Integration source code
-    ├── Dockerfile                   # Container definition
-    └── requirements.txt             # Python dependencies
-```
-
-The External Integrations Layer provides connections to external systems:
-
-- **cloud-storage/**: Connectors for AWS S3, Google Cloud Storage, Azure Blob Storage
-- **databases/**: Connectors for external databases (MySQL, PostgreSQL, MongoDB)
-- **ai-pipelines/**: Integrations with AI/ML pipelines (TensorFlow, PyTorch, SageMaker)
-- **external-apis/**: RESTful API for external system access
-
-### Common Libraries (common/)
-
-```
-common/
-├── models/                          # Shared data models
-├── utils/                           # Shared utility functions
-└── constants/                       # Common constants and definitions
-```
-
-The Common directory contains shared code used across multiple services:
-
-- **models/**: Shared data models and schemas
-- **utils/**: Utility functions for logging, error handling, etc.
-- **constants/**: Common constants and configurations
+- **metadata-db/**: PostgreSQL database initialization scripts for metadata, assessment results, and user configurations
+- **MinIO**: S3-compatible object storage for datasets and reports (configured in docker-compose.yml)
 
 ### Documentation (docs/)
 
@@ -247,57 +181,35 @@ The Documentation directory contains comprehensive documentation for the project
 - **user-guides/**: End-user documentation and tutorials
 - **development/**: Developer guidelines and setup instructions
 
-### Tests (tests/)
-
-```
-tests/
-├── unit/                            # Unit tests
-├── integration/                     # Integration tests
-├── e2e/                             # End-to-end tests
-└── performance/                     # Performance tests
-```
-
-The Tests directory contains automated tests for the application:
-
-- **unit/**: Unit tests for individual components
-- **integration/**: Tests for service interactions
-- **e2e/**: End-to-end tests for complete workflows
-- **performance/**: Performance and load testing
-
-### Deployment (deployment/)
-
-```
-deployment/
-├── kubernetes/                      # Kubernetes manifests
-├── docker-compose/                  # Docker Compose files
-└── terraform/                       # Infrastructure as Code
-```
-
-The Deployment directory contains configuration for deploying the application:
-
-- **kubernetes/**: Kubernetes manifests for container orchestration
-- **docker-compose/**: Docker Compose files for deployment scenarios
-- **terraform/**: Infrastructure as Code for cloud provisioning
-
 ### Scripts (scripts/)
 
 ```
 scripts/
-├── setup/                           # Setup scripts
-└── maintenance/                     # Maintenance scripts
+├── init_db.py                       # Database initialization (Python)
+├── init_db.sh                       # Database initialization (Shell)
+├── build_images.sh                  # Build Docker images
+├── deploy_to_k8s.sh                 # Deploy to Kubernetes
+├── run_unit_tests.sh                # Run unit tests
+├── run_integration_tests.sh         # Run integration tests
+└── run_e2e_tests.sh                 # Run end-to-end tests
 ```
 
 The Scripts directory contains utility scripts for development and operations:
 
-- **setup/**: Environment setup and initialization scripts
-- **maintenance/**: Database maintenance, backups, and other operational tasks
+- **init_db**: Database initialization scripts
+- **build_images.sh**: Build all Docker images
+- **deploy_to_k8s.sh**: Deploy to Kubernetes cluster
+- **run_*_tests.sh**: Test runner scripts
+
+**Note:** Tests are located within each service directory (e.g., `api-gateway/tests/`, `processing/assessment-service/tests/`) rather than in a centralized `tests/` directory.
 
 ## Key Files
 
+- **.env.example**: Environment variables template (copy to `.env` and configure)
 - **.gitignore**: Specifies files to be ignored by Git
 - **README.md**: Project overview and documentation
 - **LICENSE**: MIT License
-- **docker-compose.yml**: Development environment configuration
+- **docker-compose.yml**: Docker Compose configuration for all services
 
 ## Service Interaction
 
